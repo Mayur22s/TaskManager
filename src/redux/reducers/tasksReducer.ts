@@ -65,6 +65,7 @@ const taskReducer = (state = initialState, action: TaskAction) => {
             return {
                 ...state,
                 isTaskUpdated: false,
+                isTaskCreated: false,
             }
 
 

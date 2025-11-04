@@ -4,11 +4,16 @@ import Input from '../components/atoms/Input'
 import { Button } from '../components/atoms'
 import { useDispatch, useSelector } from 'react-redux'
 import { addTaskAction, editTaskAction, resetNavigationFlagAction } from '../redux/actions/taskActions'
-import { useNavigation } from '@react-navigation/native'
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
+import { stacks } from '../navigation/stack'
 
-const AddEditTask = ({ route }) => {
-    const { selectedTask } = route.params || {}; // <-- get passed task
-    console.log('routes', route, selectedTask);
+type AddEditTaskRouteProp = RouteProp<stacks, 'AddEditTask'>;
+
+const AddEditTask = () => {
+
+    const route = useRoute<AddEditTaskRouteProp>()
+    const selectedTask = route.params?.selectedTask;
+
     const navigation = useNavigation();
 
     const dispatch = useDispatch()
@@ -20,6 +25,13 @@ const AddEditTask = ({ route }) => {
     const { isTaskUpdated, isTaskCreated } = useSelector((state: any) => state.taskReducer)
 
     useEffect(() => {
+        if (isTaskUpdated || isTaskCreated) {
+            navigation.goBack();
+            dispatch(resetNavigationFlagAction());
+        }
+    }, [isTaskUpdated, isTaskCreated])
+
+    useEffect(() => {
         if (selectedTask?.id) {
             setTaskInput({
                 title: selectedTask?.title || '',
@@ -27,13 +39,6 @@ const AddEditTask = ({ route }) => {
             })
         }
     }, [selectedTask?.id])
-
-    useEffect(() => {
-        if (isTaskUpdated || isTaskCreated) {
-            navigation.goBack();
-            dispatch(resetNavigationFlagAction())
-        }
-    }, [isTaskUpdated, isTaskCreated])
 
     const handleChange = (key: string, value: string) => {
         setTaskInput({

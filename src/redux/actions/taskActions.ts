@@ -24,11 +24,6 @@ export const resetNavigationFlagAction = () => ({
     type: ActionConstants.RESET_NAVIGATION
 })
 
-export const searchTaskAction = (query) => ({
-    type: ActionConstants.SEARCH_TASK,
-    query,
-})
-
 export const syncTasksRequest = () => ({
     type: ActionConstants.SYNC_TASKS_REQUEST,
 })

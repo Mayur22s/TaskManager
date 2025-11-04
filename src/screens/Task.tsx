@@ -5,12 +5,20 @@ import Label from '../components/atoms/Label'
 import { useNavigation } from '@react-navigation/native'
 import { useDispatch, useSelector } from 'react-redux'
 import TaskCard from '../components/templates/cards/Task'
-import { deleteTaskAction, syncTasksRequest } from '../redux/actions/taskActions'
+import { deleteTaskAction, resetNavigationFlagAction, syncTasksRequest } from '../redux/actions/taskActions'
 import Input from '../components/atoms/Input'
 import useDebounce from '../hooks/useDebounce'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { stacks } from '../navigation/stack'
+
+type TaskListNavigationProps = NativeStackNavigationProp<
+    stacks
+>;
 
 const Tasks = () => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<TaskListNavigationProps>();
+
+    // const navigation = useNavigation();
     const dispatch = useDispatch();
     const taskList = useSelector((state: any) => state.taskReducer?.taskList);
     const syncStatus = useSelector((state: any) => state.taskReducer?.syncStatus);
@@ -27,12 +35,14 @@ const Tasks = () => {
     }, [debouncedSearch, taskList])
 
     const handleAdd = () => {
-        navigation.navigate('AddEditTask');
+        console.log('55555 here');
+        dispatch(resetNavigationFlagAction())
+        navigation.navigate('AddEditTask')
     }
 
     const handleEdit = (item) => {
-        // console.log('66666 item', item);
-        navigation.navigate('AddEditTask', { selectedTask: item });
+        dispatch(resetNavigationFlagAction())
+        navigation.navigate('AddEditTask', { selectedTask: item })
     }
 
     const handleDelete = (item) => {
