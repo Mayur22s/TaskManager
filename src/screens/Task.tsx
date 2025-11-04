@@ -26,7 +26,6 @@ const Tasks = () => {
     const syncStatus = useSelector((state: any) => state.taskReducer?.syncStatus);
     const [searchText, setSearchText] = useState('');
     const debouncedSearch = useDebounce(searchText, 400);
-    const rotation = useRef(new Animated.Value(0)).current;
 
     const filteredTasks = useMemo(() => {
         if (!debouncedSearch.trim()) return taskList
@@ -36,23 +35,6 @@ const Tasks = () => {
             task.description.toLowerCase().includes(lowerSearch)
         )
     }, [debouncedSearch, taskList])
-
-
-    useEffect(() => {
-        if (syncStatus === 'syncing') {
-            Animated.loop(
-                Animated.timing(rotation, {
-                    toValue: 1,
-                    duration: 1000,
-                    easing: Easing.linear,
-                    useNativeDriver: true,
-                })
-            ).start();
-        } else {
-            rotation.stopAnimation();
-            rotation.setValue(0);
-        }
-    }, [syncStatus])
 
     const handleAdd = () => {
         dispatch(resetNavigationFlagAction())
@@ -92,11 +74,6 @@ const Tasks = () => {
         dispatch(syncTasksRequest())
     }
 
-    const rotate = rotation.interpolate({
-        inputRange: [0, 1],
-        outputRange: ['0deg', '360deg'],
-    });
-
     const listEmpty = () => (
         <ListEmptyComponent />
     )
@@ -123,24 +100,10 @@ const Tasks = () => {
                 placeholder="Search tasks..."
             />
 
-            <View style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-            }}>
 
-                <Button buttonName="Sync Now" onPress={syncNow} style={{
-                    width: '92%'
+            <Button buttonName="Sync Now" onPress={syncNow} style={{
                 }} />
 
-                {syncStatus === 'syncing' && (
-                    <Animated.View
-                        style={[
-                            styles.loader,
-                            { borderColor: colors.primary, transform: [{ rotate }] },
-                        ]}
-                    />
-                )}
-            </View>
 
             <FlatList
                 data={filteredTasks || []}
