@@ -1,29 +1,31 @@
-import React, { useMemo, useState } from 'react'
-import { Alert, FlatList, View, } from 'react-native'
-import { Button } from '../components/atoms'
-import Label from '../components/atoms/Label'
 import { useNavigation } from '@react-navigation/native'
-import { useDispatch, useSelector } from 'react-redux'
-import TaskCard from '../components/templates/cards/Task'
-import { deleteTaskAction, resetNavigationFlagAction, syncTasksRequest } from '../redux/actions/taskActions'
-import Input from '../components/atoms/Input'
-import useDebounce from '../hooks/useDebounce'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { Alert, FlatList, View, StyleSheet } from 'react-native'
+import { useDispatch, useSelector } from 'react-redux'
+import { Button } from '../components/atoms'
+import Input from '../components/atoms/Input'
+import Label from '../components/atoms/Label'
+import TaskCard from '../components/templates/cards/Task'
+import useDebounce from '../hooks/useDebounce'
 import { stacks } from '../navigation/stack'
+import { deleteTaskAction, resetNavigationFlagAction, syncTasksRequest } from '../redux/actions/taskActions'
+import { useThemeColors } from '../theme'
 
 type TaskListNavigationProps = NativeStackNavigationProp<
     stacks
->;
+    >
 
 const Tasks = () => {
+    const colors = useThemeColors();
+    const styles = getStyle(colors)
     const navigation = useNavigation<TaskListNavigationProps>();
-
-    // const navigation = useNavigation();
     const dispatch = useDispatch();
     const taskList = useSelector((state: any) => state.taskReducer?.taskList);
     const syncStatus = useSelector((state: any) => state.taskReducer?.syncStatus);
     const [searchText, setSearchText] = useState('');
     const debouncedSearch = useDebounce(searchText, 400);
+    const isMounted = useRef(true);
 
     const filteredTasks = useMemo(() => {
         if (!debouncedSearch.trim()) return taskList
@@ -35,7 +37,6 @@ const Tasks = () => {
     }, [debouncedSearch, taskList])
 
     const handleAdd = () => {
-        console.log('55555 here');
         dispatch(resetNavigationFlagAction())
         navigation.navigate('AddEditTask')
     }
@@ -47,26 +48,23 @@ const Tasks = () => {
 
     const handleDelete = (item) => {
         Alert.alert(
-            `Are you sure you want to delete this task?`,
-            ``,
+            'Delete Task',
+            'Are you sure you want to delete this task?',
             [
+                { text: 'Cancel', style: 'cancel' },
                 {
-                    text: 'Cancel',
-                    onPress: () => console.log('Cancel Pressed'),
-                    style: 'cancel',
-                },
-                {
-                    text: 'OK', onPress: () => {
-                        console.log('OK Pressed', item)
-                        dispatch(deleteTaskAction(item))
-                    }
+              text: 'OK',
+              onPress: () => {
+                  if (isMounted.current) {
+                      dispatch(deleteTaskAction(item));
+                  }
+              },
                 },
             ]
-        )
-    }
+        );
+    };
 
     const renderItem = ({ item }) => {
-        // console.log('77777 item', item);
         return <TaskCard item={item}
             handleDelete={() => handleDelete(item)}
             handleEdit={() => handleEdit(item)}
@@ -79,23 +77,27 @@ const Tasks = () => {
     }
 
     return (
-        <View>
+        <View style={{
+            backgroundColor: colors.background
+        }}>
             <Label
-                title='Task Manager'
+                title="My Tasks"
+                style={styles.label}
             />
+
             <Button
                 buttonName={'Add Task'}
                 onPress={handleAdd}
                 style={{
-                    // backgroundColor: 'green'
+                    backgroundColor: colors.add
                 }}
+                textStyle={styles.btnText}
             />
 
             <Input
                 value={searchText}
                 onChangeText={setSearchText}
                 placeholder="Search tasks..."
-                style={{}}
             />
 
             <View style={{ padding: 16 }}>
@@ -108,10 +110,26 @@ const Tasks = () => {
                 keyExtractor={(item) => item.id}
                 renderItem={renderItem}
             />
-
-
         </View>
     )
 }
+
+const getStyle = (colors) => StyleSheet.create({
+    btnText: {
+        color: '#FFFFFF',
+        fontSize: 16,
+        fontWeight: '600',
+        textAlign: 'center',
+        letterSpacing: 0.3,
+    },
+    label: {
+        fontSize: 24,
+        fontWeight: '700',
+        color: colors.text,
+        letterSpacing: 0.5,
+
+    },
+
+})
 
 export default Tasks

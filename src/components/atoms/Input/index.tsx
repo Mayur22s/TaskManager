@@ -1,5 +1,6 @@
 import React, { FC } from 'react'
 import { TextInput, TextInputProps, View } from 'react-native'
+import { useThemeColors } from '../../../theme';
 
 interface InputProps extends TextInputProps {
 }
@@ -9,6 +10,8 @@ const Input: FC<InputProps> = ({
     placeholder,
     onChangeText,
 }) => {
+    const colors = useThemeColors();
+
     return (
         <View style={{
             borderWidth: 1,

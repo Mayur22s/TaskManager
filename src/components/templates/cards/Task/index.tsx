@@ -2,6 +2,8 @@ import React, { FC } from 'react'
 import { View } from 'react-native'
 import Label from '../../../atoms/Label'
 import { Button } from '../../../atoms'
+import { useThemeColors } from '../../../../theme'
+import getStyle from './styles'
 
 interface TaskCardProps {
     item: any
@@ -13,31 +15,25 @@ const TaskCard: FC<TaskCardProps> = ({
     handleDelete,
     handleEdit
 }) => {
+    const colors = useThemeColors();
+    const styles = getStyle(colors)
     return (
-        <View style={{
-            borderWidth: 1,
-            padding: 10,
-            marginVertical: 5,
-            borderRadius: 8
-        }}>
-            <Label title={item?.title} />
+        <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <Label title={item?.title} style={[styles.title, { color: colors.text }]} />
+            <Label title={item?.description} style={[styles.description, { color: colors.secondaryText }]} />
 
-            <Label title={item?.description} />
-
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <View style={styles.actionContainer}>
                 <Button
-                    buttonName='Edit'
+                    buttonName="Edit"
                     onPress={handleEdit}
-                >
-
-                </Button>
-                <Label title={` | `} />
+                    style={[styles.editButton, { backgroundColor: colors.edit }]}
+                />
                 <Button
-                    buttonName='Delete'
+                    buttonName="Delete"
                     onPress={handleDelete}
-                ></Button>
+                    style={[styles.deleteButton, { backgroundColor: colors.delete }]}
+                />
             </View>
-
         </View>
     )
 }

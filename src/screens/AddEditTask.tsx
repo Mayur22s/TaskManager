@@ -6,10 +6,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import { addTaskAction, editTaskAction, resetNavigationFlagAction } from '../redux/actions/taskActions'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 import { stacks } from '../navigation/stack'
+import { useThemeColors } from '../theme'
 
 type AddEditTaskRouteProp = RouteProp<stacks, 'AddEditTask'>;
 
 const AddEditTask = () => {
+    const colors = useThemeColors();
 
     const route = useRoute<AddEditTaskRouteProp>()
     const selectedTask = route.params?.selectedTask;
@@ -87,7 +89,7 @@ const AddEditTask = () => {
                 buttonName={selectedTask?.id ? 'Update Task' : 'Save Task'}
                 onPress={selectedTask?.id ? updateTask : handleSubmit}
                 style={{
-                    backgroundColor: 'green',
+                    backgroundColor: selectedTask?.id ? colors.update : colors.add,
                 }}
             />
         </View>
