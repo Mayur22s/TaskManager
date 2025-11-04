@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View } from 'react-native'
+import { View, StyleSheet } from 'react-native'
 import Input from '../components/atoms/Input'
 import { Button } from '../components/atoms'
 import { useDispatch, useSelector } from 'react-redux'
@@ -68,32 +68,49 @@ const AddEditTask = () => {
     }
 
     return (
-        <View style={{
-            paddingHorizontal: 20
-        }}>
-            {/* task title */}
+        <View
+            style={[
+                styles.container,
+                { backgroundColor: colors.background },
+            ]}
+        >
+            {/* Task title */}
             <Input
                 value={taskInput.title}
-                placeholder='Enter task title'
+                placeholder="Enter task title"
                 onChangeText={(text: string) => handleChange('title', text)}
             />
 
-            {/* task description */}
+            {/* Task description */}
             <Input
                 value={taskInput.description}
-                placeholder='Enter task description'
+                placeholder="Enter task description"
                 onChangeText={(text: string) => handleChange('description', text)}
             />
 
             <Button
                 buttonName={selectedTask?.id ? 'Update Task' : 'Save Task'}
                 onPress={selectedTask?.id ? updateTask : handleSubmit}
-                style={{
-                    backgroundColor: selectedTask?.id ? colors.update : colors.add,
-                }}
+                style={[
+                    styles.button,
+                    { backgroundColor: selectedTask?.id ? colors.update : colors.add },
+                ]}
             />
         </View>
+
     )
 }
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+    },
+    button: {
+        borderRadius: 10,
+        marginTop: 20,
+        paddingVertical: 10,
+    },
+});
 
 export default AddEditTask

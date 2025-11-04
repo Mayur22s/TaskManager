@@ -11,6 +11,7 @@ import useDebounce from '../hooks/useDebounce'
 import { stacks } from '../navigation/stack'
 import { deleteTaskAction, resetNavigationFlagAction, syncTasksRequest } from '../redux/actions/taskActions'
 import { useThemeColors } from '../theme'
+import ListEmptyComponent from '../components/templates/ListEmpty'
 
 type TaskListNavigationProps = NativeStackNavigationProp<
     stacks
@@ -25,7 +26,6 @@ const Tasks = () => {
     const syncStatus = useSelector((state: any) => state.taskReducer?.syncStatus);
     const [searchText, setSearchText] = useState('');
     const debouncedSearch = useDebounce(searchText, 400);
-    const isMounted = useRef(true);
 
     const filteredTasks = useMemo(() => {
         if (!debouncedSearch.trim()) return taskList
@@ -55,9 +55,7 @@ const Tasks = () => {
                 {
               text: 'OK',
               onPress: () => {
-                  if (isMounted.current) {
-                      dispatch(deleteTaskAction(item));
-                  }
+                  dispatch(deleteTaskAction(item))
               },
                 },
             ]
@@ -76,10 +74,12 @@ const Tasks = () => {
         dispatch(syncTasksRequest())
     }
 
+    const listEmpty = () => (
+        <ListEmptyComponent />
+    )
+
     return (
-        <View style={{
-            backgroundColor: colors.background
-        }}>
+        <View style={styles.container}>
             <Label
                 title="My Tasks"
                 style={styles.label}
@@ -100,15 +100,16 @@ const Tasks = () => {
                 placeholder="Search tasks..."
             />
 
-            <View style={{ padding: 16 }}>
+            <View>
                 <Button buttonName="Sync Now" onPress={syncNow} />
-                <Label title={`Sync Status: ${syncStatus}`} />
+                {/* <Label title={`Sync Status: ${syncStatus}`} /> */}
             </View>
 
             <FlatList
                 data={filteredTasks || []}
                 keyExtractor={(item) => item.id}
                 renderItem={renderItem}
+                ListEmptyComponent={listEmpty}
             />
         </View>
     )
@@ -127,9 +128,15 @@ const getStyle = (colors) => StyleSheet.create({
         fontWeight: '700',
         color: colors.text,
         letterSpacing: 0.5,
-
+        paddingBottom: 10,
+        paddingTop: 5
     },
-
+    container: {
+        backgroundColor: colors.background,
+        paddingHorizontal: 16,
+        paddingBottom: 20,
+        flex: 1,
+    },
 })
 
 export default Tasks
