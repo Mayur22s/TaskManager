@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useState } from 'react'
 import { View, StyleSheet } from 'react-native'
 import Input from '../components/atoms/Input'
 import { Button } from '../components/atoms'
@@ -25,6 +25,13 @@ const AddEditTask = () => {
     }
     const [taskInput, setTaskInput] = useState(taskInputFields)
     const { isTaskUpdated, isTaskCreated } = useSelector((state: any) => state.taskReducer)
+
+    useLayoutEffect(() => {
+        const isEdit = !!route.params?.selectedTask?.id;
+        navigation.setOptions({
+            title: isEdit ? 'Edit Task' : 'Add Task',
+        });
+    }, [navigation, route.params])
 
     useEffect(() => {
         if (isTaskUpdated || isTaskCreated) {
