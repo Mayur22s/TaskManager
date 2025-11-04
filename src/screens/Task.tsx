@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { Alert, FlatList, View, StyleSheet } from 'react-native'
+import { Alert, FlatList, View, StyleSheet, Animated, Easing } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux'
 import { Button } from '../components/atoms'
 import Input from '../components/atoms/Input'
@@ -26,6 +26,7 @@ const Tasks = () => {
     const syncStatus = useSelector((state: any) => state.taskReducer?.syncStatus);
     const [searchText, setSearchText] = useState('');
     const debouncedSearch = useDebounce(searchText, 400);
+    const rotation = useRef(new Animated.Value(0)).current;
 
     const filteredTasks = useMemo(() => {
         if (!debouncedSearch.trim()) return taskList
@@ -35,6 +36,23 @@ const Tasks = () => {
             task.description.toLowerCase().includes(lowerSearch)
         )
     }, [debouncedSearch, taskList])
+
+
+    useEffect(() => {
+        if (syncStatus === 'syncing') {
+            Animated.loop(
+                Animated.timing(rotation, {
+                    toValue: 1,
+                    duration: 1000,
+                    easing: Easing.linear,
+                    useNativeDriver: true,
+                })
+            ).start();
+        } else {
+            rotation.stopAnimation();
+            rotation.setValue(0);
+        }
+    }, [syncStatus])
 
     const handleAdd = () => {
         dispatch(resetNavigationFlagAction())
@@ -74,6 +92,11 @@ const Tasks = () => {
         dispatch(syncTasksRequest())
     }
 
+    const rotate = rotation.interpolate({
+        inputRange: [0, 1],
+        outputRange: ['0deg', '360deg'],
+    });
+
     const listEmpty = () => (
         <ListEmptyComponent />
     )
@@ -100,9 +123,23 @@ const Tasks = () => {
                 placeholder="Search tasks..."
             />
 
-            <View>
-                <Button buttonName="Sync Now" onPress={syncNow} />
-                {/* <Label title={`Sync Status: ${syncStatus}`} /> */}
+            <View style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+            }}>
+
+                <Button buttonName="Sync Now" onPress={syncNow} style={{
+                    width: '92%'
+                }} />
+
+                {syncStatus === 'syncing' && (
+                    <Animated.View
+                        style={[
+                            styles.loader,
+                            { borderColor: colors.primary, transform: [{ rotate }] },
+                        ]}
+                    />
+                )}
             </View>
 
             <FlatList
@@ -136,6 +173,14 @@ const getStyle = (colors) => StyleSheet.create({
         paddingHorizontal: 16,
         paddingBottom: 20,
         flex: 1,
+    },
+    loader: {
+        width: 26,
+        height: 26,
+        borderWidth: 3,
+        borderRadius: 13,
+        borderTopColor: 'transparent',
+        marginLeft: '2%',
     },
 })
 
