@@ -1,10 +1,6 @@
+import { TaskPayload } from "../../utils/interface/task";
 import { ActionConstants } from "../ActionConstants";
 
-export interface TaskPayload {
-    title: string
-    description: string
-    id: string | number
-}
 export const addTaskAction = (payload: TaskPayload) => ({
     type: ActionConstants.ADD_TASK_SUCCESS,
     payload,

@@ -1,27 +1,11 @@
+import { InitialState, TaskAction } from "../../utils/interface/task"
 import { ActionConstants } from "../ActionConstants"
-import { TaskPayload } from "../actions/taskActions"
 
-interface TaskAction {
-    type: string
-    payload: TaskPayload
-}
-interface TasksData {
-    title: string
-    description: string
-    id: string
-}
-interface InitialState {
-    isLoading: boolean,
-    taskList: TasksData[]
-    isTaskUpdated: boolean
-    syncStatus: string
-    isTaskCreated: boolean
-}
 const initialState: InitialState = {
     isLoading: false,
     taskList: [],
     isTaskUpdated: false,
-    syncStatus: 'idle', // idle | syncing | success | error
+    syncStatus: 'idle',
     isTaskCreated: false,
 }
 const taskReducer = (state = initialState, action: TaskAction) => {
