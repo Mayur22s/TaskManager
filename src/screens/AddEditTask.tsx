@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react'
-import { View, StyleSheet } from 'react-native'
+import { View, StyleSheet, Platform, ToastAndroid, Alert } from 'react-native'
 import Input from '../components/atoms/Input'
 import { Button } from '../components/atoms'
 import { useDispatch, useSelector } from 'react-redux'
@@ -24,7 +24,7 @@ const AddEditTask = () => {
         description: '',
     }
     const [taskInput, setTaskInput] = useState(taskInputFields)
-    const { isTaskUpdated, isTaskCreated } = useSelector((state: any) => state.taskReducer)
+    const { isTaskUpdated, isTaskCreated } = useSelector((state: any) => state?.taskReducer)
 
     useLayoutEffect(() => {
         const isEdit = !!route.params?.selectedTask?.id;
@@ -57,15 +57,27 @@ const AddEditTask = () => {
     }
 
     const handleSubmit = () => {
+        const trimmedTitle = taskInput?.title?.trim()
+        const trimmedDescription = taskInput?.description?.trim()
+        if (!trimmedTitle || !trimmedDescription) {
+            showToast('Please enter both title and description')
+            return
+        }
         const payload = {
-            title: taskInput.title.trim(),
-            description: taskInput.description.trim(),
+            title: trimmedTitle,
+            description: trimmedDescription,
             id: Date.now(),
         }
-        dispatch(addTaskAction(payload))
+        dispatch(addTaskAction(payload));
     }
 
     const updateTask = () => {
+        const trimmedTitle = taskInput.title.trim()
+        const trimmedDescription = taskInput.description.trim()
+        if (!trimmedTitle || !trimmedDescription) {
+            showToast('Please enter both title and description')
+            return
+        }
         const payload = {
             title: taskInput.title.trim(),
             description: taskInput.description.trim(),
@@ -73,6 +85,14 @@ const AddEditTask = () => {
         }
         dispatch(editTaskAction(payload))
     }
+
+    const showToast = (message: string) => {
+        if (Platform.OS === 'android') {
+            ToastAndroid.show(message, ToastAndroid.SHORT);
+        } else {
+            Alert.alert('Notice', message);
+        }
+    };
 
     return (
         <View
@@ -93,6 +113,8 @@ const AddEditTask = () => {
                 value={taskInput.description}
                 placeholder="Enter task description"
                 onChangeText={(text: string) => handleChange('description', text)}
+                multiline
+                numberOfLines={3}
             />
 
             <Button
@@ -102,6 +124,7 @@ const AddEditTask = () => {
                     styles.button,
                     { backgroundColor: selectedTask?.id ? colors.update : colors.add },
                 ]}
+                disabled={!taskInput.title || !taskInput.description}
             />
         </View>
 

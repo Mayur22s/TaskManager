@@ -6,22 +6,22 @@ import rootReducer from "../reducers";
 import createSagaMiddleware from "redux-saga";
 import rootSaga from "../sagas";
 
-// 🔹 Configure persistence
+// Configure persistence
 const persistConfig = {
     key: "root",           // Storage key
     storage: AsyncStorage, // Use AsyncStorage in React Native
     whitelist: ["taskReducer"],   // add reducers here 
-};
+}
 
-// 🔹 Create persisted reducer
+// Create persisted reducer
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 const sagaMiddleware = createSagaMiddleware();
 
-// 🔹 Create store with persisted reducer
+// Create store with persisted reducer
 const store = createStore(persistedReducer, applyMiddleware(sagaMiddleware));
 
-// 🔹 Create persistor (controls rehydration)
+// Create persistor (controls rehydration)
 const persistor = persistStore(store);
 sagaMiddleware.run(rootSaga);
 

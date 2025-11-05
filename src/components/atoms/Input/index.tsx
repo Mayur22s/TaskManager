@@ -4,7 +4,12 @@ import { useThemeColors } from '../../../theme';
 
 interface InputProps extends TextInputProps { }
 
-const Input: FC<InputProps> = ({ value, placeholder, onChangeText, style, ...rest }) => {
+const Input: FC<InputProps> = ({
+    value,
+    placeholder,
+    onChangeText,
+    style,
+    ...rest }) => {
     const colors = useThemeColors();
 
     return (

@@ -9,7 +9,7 @@ const ListEmptyComponent = () => {
     return (
         <View style={[styles.emptyContainer, { backgroundColor: colors.background }]}>
             <Label
-                title=""
+                title={`Tap “Add Task” to create one.`}
                 style={[styles.emptyText, { color: colors.secondaryText }]}
             />
         </View>
@@ -20,11 +20,11 @@ const styles = StyleSheet.create({
     emptyContainer: {
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: 40,
+        marginTop: 100,
         padding: 20,
     },
     emptyText: {
-        fontSize: 16,
+        fontSize: 12,
         fontWeight: '400',
     },
 });

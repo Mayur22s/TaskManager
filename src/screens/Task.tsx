@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { Alert, FlatList, View, StyleSheet, Animated, Easing } from 'react-native'
+import React, { useCallback, useMemo, useState } from 'react'
+import { Alert, FlatList, View, StyleSheet } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux'
 import { Button } from '../components/atoms'
 import Input from '../components/atoms/Input'
@@ -22,8 +22,7 @@ const Tasks = () => {
     const styles = getStyle(colors)
     const navigation = useNavigation<TaskListNavigationProps>();
     const dispatch = useDispatch();
-    const taskList = useSelector((state: any) => state.taskReducer?.taskList);
-    const syncStatus = useSelector((state: any) => state.taskReducer?.syncStatus);
+    const { taskList, syncStatus } = useSelector((state) => state?.taskReducer)
     const [searchText, setSearchText] = useState('');
     const debouncedSearch = useDebounce(searchText, 400);
 
@@ -62,17 +61,15 @@ const Tasks = () => {
         );
     };
 
-    const renderItem = ({ item }) => {
+    const renderItem = useCallback(({ item }) => {
         return <TaskCard item={item}
             handleDelete={() => handleDelete(item)}
             handleEdit={() => handleEdit(item)}
             key={item?.id}
         />
-    }
+    }, [])
 
-    const syncNow = () => {
-        dispatch(syncTasksRequest())
-    }
+    const syncNow = () => dispatch(syncTasksRequest())
 
     const listEmpty = () => (
         <ListEmptyComponent />
@@ -103,6 +100,7 @@ const Tasks = () => {
 
             <Button buttonName="Sync Now" onPress={syncNow} style={{
                 }} />
+            <Label title={`Sync Status: ${syncStatus}`} />
 
 
             <FlatList

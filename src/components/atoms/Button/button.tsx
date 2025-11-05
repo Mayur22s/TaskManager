@@ -7,18 +7,24 @@ interface ButtonProps extends TouchableOpacityProps {
     buttonName: string;
     style?: ViewStyle | ViewStyle[];
     textStyle?: TextStyle | TextStyle[];
+    onPress: () => void
 }
 
-const Button: FC<ButtonProps> = ({ buttonName, onPress, style, textStyle }) => {
+const Button: FC<ButtonProps> = ({
+    buttonName,
+    onPress,
+    style,
+    textStyle,
+}) => {
     const colors = useThemeColors();
 
     return (
         <TouchableOpacity
             onPress={onPress}
-          style={[styles.button, { backgroundColor: colors.primary }, style]}
-      >
-          <Label title={buttonName} style={[styles.text, textStyle]} />
-      </TouchableOpacity>
+            style={[styles.button, { backgroundColor: colors.primary }, style]}
+        >
+            <Label title={buttonName} style={[styles.text, textStyle]} />
+        </TouchableOpacity>
     );
 };
 

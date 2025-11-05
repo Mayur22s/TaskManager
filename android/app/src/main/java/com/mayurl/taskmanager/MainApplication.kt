@@ -1,4 +1,4 @@
-package com.taskmanager
+package com.mayurl.taskmanager
 
 import android.app.Application
 import android.content.res.Configuration

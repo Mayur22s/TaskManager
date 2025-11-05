@@ -2,26 +2,27 @@ import { call, put, select, takeLatest } from "redux-saga/effects";
 import { syncTasksSuccess, syncTasksFailure } from "../actions/taskActions";
 import { ActionConstants } from "../ActionConstants";
 
+const API = "https://jsonplaceholder.typicode.com/todos?_limit=5"
+
 function* syncTasksSaga() {
     try {
-        // Get local tasks
+        // get local tasks
         const localTasks = yield select(state => state.taskReducer.taskList);
 
-        // Fetch new tasks from the mock API
-        const response = yield call(fetch, "https://jsonplaceholder.typicode.com/todos?_limit=5");
+        // fetch new tasks from the mock API
+        const response = yield call(fetch, API);
         const apiTasks = yield call([response, "json"]);
 
-        // Give each fetched task a random ID (to make them unique)
         const newApiTasks = apiTasks.map(task => ({
             ...task,
             id: `${task.id}-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
             description: `Fetched from API`,
         }));
 
-        // Append fetched tasks to local ones (no filtering)
+        // append fetched tasks to local ones
         const mergedTasks = [...localTasks, ...newApiTasks];
 
-        // Save merged list to Redux (persisted to AsyncStorage automatically)
+        // save merged list to Redux (persisted to AsyncStorage automatically)
         yield put(syncTasksSuccess(mergedTasks));
     } catch (error) {
         yield put(syncTasksFailure(error.message));

@@ -1,9 +1,10 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Tasks from '../screens/Task';
-import AddEditTask from '../screens/AddEditTask';
 import { FC } from 'react';
+
 import { stacks } from './stack';
+import AddEditTask from '../screens/AddEditTask';
+import Tasks from '../screens/Task';
 
 const Stack = createNativeStackNavigator<stacks>();
 const AppNavigator: FC = () => {
