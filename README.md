@@ -20,6 +20,9 @@ Setup
         => a: to run emulator (android)
     npm run android or npm run ios to run emulator or simulator
 
+# release android apk
+    npm run build:android-release
+
 # approach
     - created screen Tasks for tasks listing and AddEditTask for adding/updating task
     - use Flatlist to render task lists. Initially no tasks are added so showing message and it is handled by **ListEmptyComponent** of a Flatlist.
@@ -36,6 +39,7 @@ Setup
 
     - dark and light theme is controlled by device theme value.
     - Atomic design: shared UI elements (Button, Input, Label) reused across screens for continuity
+
 
 
 
