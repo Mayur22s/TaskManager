@@ -23,7 +23,7 @@ Setup
 # release android apk
     npm run build:android-release
 
-# approach
+<!-- # approach
     - created screen Tasks for tasks listing and AddEditTask for adding/updating task
     - use Flatlist to render task lists. Initially no tasks are added so showing message and it is handled by **ListEmptyComponent** of a Flatlist.
     - Tasks screen, you can Add Task, Sync tasks or search the tasks.
@@ -45,4 +45,4 @@ Setup
 
 # Known Issues
     : in app theme manual control is missing
-    : when offline, there is no toaster on press sync now button.
+    : when offline, there is no toaster on press sync now button. -->
